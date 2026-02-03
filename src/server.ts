@@ -1,5 +1,9 @@
 function welcome(name: string): string {
-  return name;
+  const user = {
+    name: "Devendra",
+  };
+  const url = user.name;
+  return `Welcome, ${name} (${url})!`;
 }
 
 welcome("Devendra");
