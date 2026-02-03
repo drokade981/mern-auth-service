@@ -1,5 +1,5 @@
-function welcome(name: string): void {
-  console.log(`Welcome to the Auth Service, ${name}`);
+function welcome(name: string): string {
+  return name;
 }
 
 welcome("Devendra");
