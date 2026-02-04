@@ -11,6 +11,7 @@ export default defineConfig(
         "dist/*", // ignore build output
 		"node_modules/*", // ignore its content
 		"eslint.config.js", // unignore `node_modules/mylibrary` directory
+        "jest.config.js", // unignore `node_modules/mylibrary` directory
 	]),
     {
         languageOptions: {
@@ -29,6 +30,7 @@ export default defineConfig(
             'no-unused-vars': 'off',
             'no-console': 'off',
             'dot-notation': 'error',
+            '@typescript-eslint/no-misused-promises': 'off',
         },
     }
 );
