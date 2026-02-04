@@ -27,7 +27,7 @@ export default defineConfig(
    
         rules: {
             'no-unused-vars': 'off',
-            'no-console': 'error',
+            'no-console': 'off',
             'dot-notation': 'error',
         },
     }

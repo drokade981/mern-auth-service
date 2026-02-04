@@ -12,10 +12,10 @@
   },
   "license": "ISC",
   "author": "Devendra Rokade <drokade981@gmail.com>",
-  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/server.js",
+    "dev": "nodemon src/server.ts",
+    "build": "tsc",
     "format:fix": "prettier --write",
     "format:check": "prettier --check",
     "lint:check": "eslint . --ext .ts",
@@ -25,13 +25,16 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/express": "^5.0.6",
     "@types/node": "^25.2.0",
     "esli": "^0.0.2",
     "eslint": "^9.39.2",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "nodemon": "^3.1.11",
     "prettier": "3.8.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
   },
@@ -43,5 +46,9 @@
     "*.{js,ts,json,css,md}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
   }
 }
