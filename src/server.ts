@@ -1,5 +1,6 @@
 import { Config } from "./config/index";
 import app from "./app";
+import logger from "./config/logger";
 
 function getPort(): number {
   const port = Config.PORT ? parseInt(Config.PORT, 10) : 3000;
@@ -10,11 +11,11 @@ const startServer = () => {
   const port = getPort();
   try {
     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+      logger.error("testing error log");
+      logger.info(`Server is running on port ${port}`);
     });
   } catch (error) {
-     
-    console.error("Failed to start server:", error);
+    logger.error("Failed to start server:", error);
     process.exit(1);
   }
 };
