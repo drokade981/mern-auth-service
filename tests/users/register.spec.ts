@@ -37,6 +37,24 @@ describe("POST /auth/register", () => {
         expect.stringContaining("json"),
       );
     });
+
+    it("should return user data", async () => {
+      // arrange
+      // const userData = {
+      //     fistName: "John",
+      //     lastName: "Doe",
+      //     email: "x1e7D@example.com",
+      //     password: "password",
+      // };
+      // act
+      // const res = await request(app).post("/auth/register").send(userData);
+      // assert
+      // expect(res.body.data).toEqual({
+      //     firstName: "John",
+      //     lastName: "Doe",
+      //     email: "x1e7D@example.com",
+      // });
+    });
   });
 
   describe("fields are missing", () => {});
