@@ -1,13 +1,31 @@
 import request from "supertest";
 import app from "../../src/app";
+import { DataSource } from "typeorm";
+import { AppDataSource } from "../../src/config/data-source";
+import { truncateTables } from "../utils";
 
 describe("POST /auth/register", () => {
+  let connection: DataSource;
+
+  beforeAll(async () => {
+    connection = await AppDataSource.initialize();
+  });
+
+  beforeEach(async () => {
+    // database truncate
+    await truncateTables(connection);
+  });
+
+  afterAll(async () => {
+    await connection.destroy();
+  });
+
   describe("given all fields", () => {
     it("should return 201", async () => {
       /// AAA arrange act assert
       // arrange
       const userData = {
-        fistName: "John",
+        firstName: "John",
         lastName: "Doe",
         email: "x1e7D@example.com",
         password: "password",
@@ -23,7 +41,7 @@ describe("POST /auth/register", () => {
     it("should return valid json response", async () => {
       // arrange
       const userData = {
-        fistName: "John",
+        firstName: "John",
         lastName: "Doe",
         email: "x1e7D@example.com",
         password: "password",
@@ -38,10 +56,30 @@ describe("POST /auth/register", () => {
       );
     });
 
+    it("should persist user in database", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      // act
+      await request(app).post("/auth/register").send(userData);
+
+      // assert
+      const userRepository = connection.getRepository("User");
+      const users = await userRepository.find();
+      expect(users).toHaveLength(1);
+      expect(users[0].firstName).toBe(userData.firstName);
+      expect(users[0].lastName).toBe(userData.lastName);
+      expect(users[0].email).toBe(userData.email);
+    });
     it("should return user data", async () => {
       // arrange
       // const userData = {
-      //     fistName: "John",
+      //     firstName: "John",
       //     lastName: "Doe",
       //     email: "x1e7D@example.com",
       //     password: "password",
