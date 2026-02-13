@@ -14,8 +14,8 @@
   "author": "Devendra Rokade <drokade981@gmail.com>",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.ts",
-    "build": "tsc",
+    "dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
+    "build": "cross-env tsc",
     "format:fix": "prettier --write",
     "format:check": "prettier --check",
     "lint:check": "eslint . --ext .ts",
@@ -28,8 +28,9 @@
     "@types/express": "^5.0.6",
     "@types/http-errors": "^2.0.5",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.2.0",
+    "@types/node": "^25.2.3",
     "@types/supertest": "^6.0.3",
+    "cross-env": "^10.1.0",
     "esli": "^0.0.2",
     "eslint": "^9.39.2",
     "globals": "^17.3.0",
@@ -57,6 +58,9 @@
     "@types/winston": "^2.4.4",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "pg": "^8.18.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28",
     "winston": "^3.19.0"
   }
 }
