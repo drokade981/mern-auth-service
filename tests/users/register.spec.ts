@@ -136,6 +136,28 @@ describe("POST /auth/register", () => {
       expect(users[0]).toHaveProperty("role");
       expect(users[0].role).toBe(Roles.CUSTOMER);
     });
+
+    it("should stored hashed password in database", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      // act
+      await request(app).post("/auth/register").send(userData);
+
+      // assert
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users[0]).toHaveProperty("password");
+      console.log(users[0].password);
+      expect(users[0].password).not.toBe(userData.password);
+      expect(users[0].password).toHaveLength(60); // bcrypt hash length is 60 characters
+      expect(users[0].password).toMatch(/^\$2b\$\d+\$/); // bcrypt hash format
+    });
   });
 
   describe("fields are missing", () => {});
