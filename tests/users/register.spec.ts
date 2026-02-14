@@ -204,4 +204,27 @@ describe("POST /auth/register", () => {
       expect(users).toHaveLength(0);
     });
   });
+
+  describe("fields are invalid", () => {
+    it("should trim spaces from email", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: " invalid-email@example.com ",
+        password: "password",
+      };
+
+      // act
+      await request(app).post("/auth/register").send(userData);
+
+      // assert
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      const user = users[0];
+
+      expect(user.email).toBe("invalid-email@example.com");
+    });
+  });
 });

@@ -2,7 +2,9 @@ import { checkSchema } from "express-validator";
 
 export default checkSchema({
   email: {
+    in: ["body"],
     errorMessage: "Email is required",
+    trim: true,
     isEmail: true,
     notEmpty: true,
   },
