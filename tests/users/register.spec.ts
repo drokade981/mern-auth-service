@@ -158,6 +158,31 @@ describe("POST /auth/register", () => {
       expect(users[0].password).toHaveLength(60); // bcrypt hash length is 60 characters
       expect(users[0].password).toMatch(/^\$2b\$\d+\$/); // bcrypt hash format
     });
+
+    it("should return 400 status code if email already exists", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      const userRepository = connection.getRepository(User);
+      await userRepository.save({
+        ...userData,
+        role: Roles.CUSTOMER,
+      });
+
+      // act
+
+      const res = await request(app).post("/auth/register").send(userData);
+      const users = await userRepository.find();
+
+      // assert
+      expect(res.statusCode).toBe(400);
+      expect(users).toHaveLength(1);
+    });
   });
 
   describe("fields are missing", () => {});
