@@ -108,7 +108,6 @@ describe("POST /auth/register", () => {
 
       // act
       const res = await request(app).post("/auth/register").send(userData);
-      console.log(res.body);
 
       // assert
       expect(res.body).toEqual(
@@ -153,7 +152,6 @@ describe("POST /auth/register", () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
       expect(users[0]).toHaveProperty("password");
-      console.log(users[0].password);
       expect(users[0].password).not.toBe(userData.password);
       expect(users[0].password).toHaveLength(60); // bcrypt hash length is 60 characters
       expect(users[0].password).toMatch(/^\$2b\$\d+\$/); // bcrypt hash format
@@ -185,5 +183,25 @@ describe("POST /auth/register", () => {
     });
   });
 
-  describe("fields are missing", () => {});
+  describe("fields are missing", () => {
+    it("should return 400 status code if email is missing", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "",
+        password: "password",
+      };
+
+      // act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // assert
+      expect(res.statusCode).toBe(400);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+  });
 });
