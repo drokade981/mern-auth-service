@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { AppDataSource } from "../../src/config/data-source";
 import { User } from "../../src/entity/User";
 import { Roles } from "../../src/constants";
+import { isJwt } from "../utils";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -203,6 +204,45 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users).toHaveLength(0);
     });
+
+    it("should return the access token and refresh token in cookiee", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      // act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      interface Headers {
+        ["set-cookie"]: string[];
+      }
+      // assert
+      let accessToken = null;
+      let refreshToken = null;
+      const cookies = (res.headers as Headers)["set-cookie"] || [];
+      cookies.forEach((cookie) => {
+        if (cookie.startsWith("accessToken")) {
+          accessToken = cookie.split(";")[0].split("=")[1];
+        }
+
+        if (cookie.startsWith("refreshToken")) {
+          refreshToken = cookie.split(";")[0].split("=")[1];
+        }
+      });
+      expect(accessToken).not.toBeNull();
+      expect(refreshToken).not.toBeNull();
+
+      expect(isJwt(accessToken!)).toBeTruthy();
+      expect(isJwt(refreshToken!)).toBeTruthy();
+    });
+
+    it.todo("should return 400 status code if firstname is missing");
+    it.todo("should return 400 status code if lastname is missing");
+    it.todo("should return 400 status code if password is missing");
   });
 
   describe("fields are invalid", () => {
@@ -226,5 +266,13 @@ describe("POST /auth/register", () => {
 
       expect(user.email).toBe("invalid-email@example.com");
     });
+
+    it.todo("should return 400 status code if email is invalid");
+    it.todo(
+      "should return 400 status code if password length is less than 8 characters",
+    );
+    it.todo(
+      "should return array of validation errors if multiple fields are invalid",
+    );
   });
 });
