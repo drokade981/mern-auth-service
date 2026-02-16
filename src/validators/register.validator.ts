@@ -5,7 +5,9 @@ export default checkSchema({
     in: ["body"],
     errorMessage: "Email is required",
     trim: true,
-    isEmail: true,
+    isEmail: {
+      errorMessage: "Invalid email format",
+    },
     notEmpty: true,
   },
   firstName: {

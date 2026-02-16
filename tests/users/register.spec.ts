@@ -320,10 +320,42 @@ describe("POST /auth/register", () => {
       expect(user.email).toBe("invalid-email@example.com");
     });
 
-    it.todo("should return 400 status code if email is invalid");
-    it.todo(
-      "should return 400 status code if password length is less than 8 characters",
-    );
+    it("should return 400 status code if email is invalid", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "invalid-email",
+        password: "password",
+      };
+
+      // act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // assert
+      expect(res.statusCode).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+    it("should return 400 status code if password length is less than 8 characters", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "pass",
+      };
+
+      // act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // assert
+      expect(res.statusCode).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
     it.todo(
       "should return array of validation errors if multiple fields are invalid",
     );
