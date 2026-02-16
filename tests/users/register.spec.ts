@@ -240,9 +240,62 @@ describe("POST /auth/register", () => {
       expect(isJwt(refreshToken!)).toBeTruthy();
     });
 
-    it.todo("should return 400 status code if firstname is missing");
-    it.todo("should return 400 status code if lastname is missing");
-    it.todo("should return 400 status code if password is missing");
+    it("should return 400 status code if firstname is missing", async () => {
+      // arrange
+      const userData = {
+        firstName: "",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      // act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // assert
+      expect(res.statusCode).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+
+    it("should return 400 status code if lastname is missing", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      // act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // assert
+      expect(res.statusCode).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
+
+    it("should return 400 status code if password is missing", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "",
+      };
+
+      // act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // assert
+      expect(res.statusCode).toBe(400);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users).toHaveLength(0);
+    });
   });
 
   describe("fields are invalid", () => {
