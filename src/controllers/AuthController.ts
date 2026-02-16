@@ -8,6 +8,8 @@ import { Logger } from "winston";
 import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { Config } from "../config";
+import { AppDataSource } from "../config/data-source";
+import { RefreshToken } from "../entity/refreshtoken";
 
 export class AuthController {
   constructor(
@@ -18,7 +20,6 @@ export class AuthController {
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
     // validate request body
     const result = validationResult(req);
-    console.log("user", result);
 
     if (!result.isEmpty()) {
       return res.status(400).json({ errors: result.array() });
@@ -60,10 +61,19 @@ export class AuthController {
         issuer: "auth-service",
       });
 
+      // persist refresh token in database with user association and expiration time
+      const MS_IN_YEAR = 365 * 24 * 60 * 60 * 1000;
+      const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
+      const newRefreshToken = await refreshTokenRepository.save({
+        user,
+        expiresAt: new Date(Date.now() + MS_IN_YEAR), // 1 year
+      });
+
       const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
         algorithm: "HS256",
         expiresIn: "1y",
         issuer: "auth-service",
+        jwtid: String(newRefreshToken.id), // use the database ID of the refresh token as the JWT ID (jti)
       });
 
       res.cookie("accessToken", accessToken, {

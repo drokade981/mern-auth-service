@@ -5,6 +5,7 @@ import { AppDataSource } from "../../src/config/data-source";
 import { User } from "../../src/entity/User";
 import { Roles } from "../../src/constants";
 import { isJwt } from "../utils";
+import { RefreshToken } from "../../src/entity/refreshtoken";
 
 describe("POST /auth/register", () => {
   let connection: DataSource;
@@ -240,6 +241,33 @@ describe("POST /auth/register", () => {
       expect(isJwt(refreshToken!)).toBeTruthy();
     });
 
+    it("should store the refresh token in database", async () => {
+      // arrange
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      // act
+      const response = await request(app).post("/auth/register").send(userData);
+
+      // assert
+      const refreshTokenRepository = connection.getRepository(RefreshToken);
+      const refreshTokens = await refreshTokenRepository.find();
+
+      expect(refreshTokens).toHaveLength(1);
+
+      const tokens = await refreshTokenRepository
+        .createQueryBuilder("refreshToken")
+        .where("refreshToken.userId = :userId", {
+          userId: (response.body as Record<string, string>).id,
+        })
+        .getMany();
+      expect(tokens).toHaveLength(1);
+    });
+
     it("should return 400 status code if firstname is missing", async () => {
       // arrange
       const userData = {
@@ -338,6 +366,7 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users).toHaveLength(0);
     });
+
     it("should return 400 status code if password length is less than 8 characters", async () => {
       // arrange
       const userData = {
