@@ -47,12 +47,6 @@ export class AuthController {
       // persist refresh token in database with user association and expiration time
       const newRefreshToken = await this.TokenService.persistRefreshToken(user);
 
-      // const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
-      //   algorithm: "HS256",
-      //   expiresIn: "1y",
-      //   issuer: "auth-service",
-      //   jwtid: String(newRefreshToken.id), // use the database ID of the refresh token as the JWT ID (jti)
-      // });
       const refreshToken = this.TokenService.generateRefreshToken({
         ...payload,
         id: String(newRefreshToken),
