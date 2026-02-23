@@ -108,5 +108,25 @@ describe("POST /auth/me", () => {
       expect(res.body.password).toBeUndefined();
       expect(res.body as Record<string, string>).not.toHaveProperty("password");
     });
+
+    it("should not return 401 status code if access token is not provided", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+      const userRepository = connection.getRepository(User);
+      await userRepository.save({
+        ...userData,
+        role: Roles.CUSTOMER,
+      });
+
+      // act
+      const res = await request(app).get("/auth/me").send();
+
+      // assert
+      expect(res.statusCode).toBe(401);
+    });
   });
 });
