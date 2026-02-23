@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { AuthRequest, RegisterUserRequest } from "../types";
+import { RegisterUserRequest } from "../types";
 import { JwtPayload } from "jsonwebtoken";
 import { UserService } from "../services/userService";
 import { Logger } from "winston";
@@ -150,17 +150,6 @@ export class AuthController {
       this.logger.info(`User logged in with id: ${user.id}`);
       // return the response
 
-      res.status(200).json(user);
-    } catch (error) {
-      next(error);
-      return;
-    }
-  }
-
-  async me(req: AuthRequest, res: Response, next: NextFunction) {
-    try {
-      this.logger.info(`User logged auth id: ${req.auth}`);
-      const user = await this.userService.findById(Number(req.auth.sub));
       res.status(200).json(user);
     } catch (error) {
       next(error);

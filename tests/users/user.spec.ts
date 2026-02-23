@@ -66,12 +66,7 @@ describe("POST /auth/me", () => {
         sub: String(user.id),
         role: user.role,
       });
-      // const accessToken = jwks.token({
-      //   aud: 'private',
-      //   iss: 'auth-service',
-      //   sub: String(user.id),
-      //   role: user.role,
-      // })
+
       // act
 
       // arrange
