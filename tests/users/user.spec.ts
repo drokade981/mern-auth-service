@@ -47,7 +47,7 @@ describe("POST /auth/me", () => {
       expect(response.statusCode).toBe(200);
     });
 
-    it.skip("should return user data", async () => {
+    it("should return user data", async () => {
       /// AAA arrange act assert
       const userData = {
         firstName: "John",
@@ -72,11 +72,40 @@ describe("POST /auth/me", () => {
       // arrange
       const res = await request(app)
         .get("/auth/me")
-        .set("Cookie", [`access_token=${accessToken}`])
+        .set("Cookie", [`accessToken=${accessToken}`])
         .send();
 
       // assert
       expect(res.body.id as Record<string, number>).toBe(user.id);
+    });
+
+    it("should not return password field", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+      const userRepository = connection.getRepository(User);
+      const user = await userRepository.save({
+        ...userData,
+        role: Roles.CUSTOMER,
+      });
+
+      // generate access token for the user
+      const accessToken = jwks.token({
+        sub: String(user.id),
+        role: user.role,
+      });
+
+      // act
+      const res = await request(app)
+        .get("/auth/me")
+        .set("Cookie", [`access_token=${accessToken}`])
+        .send();
+
+      // assert
+      expect(res.body.password).toBeUndefined();
     });
   });
 });

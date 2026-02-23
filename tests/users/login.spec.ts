@@ -1,4 +1,7 @@
 import { DataSource } from "typeorm";
+import request from "supertest";
+import { AppDataSource } from "../../src/config/data-source";
+import app from "../../src/app";
 
 describe("POST /auth/login", () => {
   let connection: DataSource;
@@ -23,28 +26,29 @@ describe("POST /auth/login", () => {
       /// AAA arrange act assert
       // arrange
       const userData = {
-        email: "x1e7D@example.com",
-        password: "password",
-      };
-
-      // act
-      const res = await request(app).post("/auth/register").send(userData);
-
-      // assert
-      expect(res.status).toBe(201);
-    });
-
-    it("should return valid json response", async () => {
-      // arrange
-      const userData = {
         firstName: "John",
         lastName: "Doe",
         email: "x1e7D@example.com",
         password: "password",
       };
+      await request(app).post("/auth/register").send(userData);
 
       // act
-      const res = await request(app).post("/auth/register").send(userData);
+      const res = await request(app).post("/auth/login").send(userData);
+
+      // assert
+      expect(res.status).toBe(200);
+    });
+
+    it("should return valid json response", async () => {
+      // arrange
+      const userData = {
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+
+      // act
+      const res = await request(app).post("/auth/login").send(userData);
 
       // assert application/json content type
       expect((res.headers as Record<string, string>)["content-type"]).toEqual(
@@ -54,20 +58,22 @@ describe("POST /auth/login", () => {
 
     it("should return user data", async () => {
       // arrange
-      // const userData = {
-      //     firstName: "John",
-      //     lastName: "Doe",
-      //     email: "x1e7D@example.com",
-      //     password: "password",
-      // };
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+        password: "password",
+      };
+      await request(app).post("/auth/register").send(userData);
       // act
-      // const res = await request(app).post("/auth/register").send(userData);
+      const res = await request(app).post("/auth/login").send(userData);
+
       // assert
-      // expect(res.body.data).toEqual({
-      //     firstName: "John",
-      //     lastName: "Doe",
-      //     email: "x1e7D@example.com",
-      // });
+      expect(res.body).toMatchObject({
+        firstName: "John",
+        lastName: "Doe",
+        email: "x1e7D@example.com",
+      });
     });
 
     it("should return an id of login user", async () => {
@@ -83,7 +89,7 @@ describe("POST /auth/login", () => {
       const res = await request(app).post("/auth/register").send(userData);
 
       // assert
-      expect(res.body).toEqual(
+      expect(res.body).toMatchObject(
         expect.objectContaining({
           id: expect.any(Number),
         }),
