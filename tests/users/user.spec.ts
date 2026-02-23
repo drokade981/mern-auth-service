@@ -106,6 +106,7 @@ describe("POST /auth/me", () => {
 
       // assert
       expect(res.body.password).toBeUndefined();
+      expect(res.body as Record<string, string>).not.toHaveProperty("password");
     });
   });
 });
