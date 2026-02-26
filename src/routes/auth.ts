@@ -11,6 +11,8 @@ import loginValidator from "../validators/login.validator";
 import { CredentialService } from "../services/CredentialService";
 import authenticate from "../middlewares/authenticate";
 import { AuthRequest } from "../types";
+import validateRefreshToken from "../middlewares/validateRefreshToken";
+import { CookieService } from "../services/CookieService";
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -18,11 +20,14 @@ const userService = new UserService(userRepository);
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 const tokenService = new TokenService(refreshTokenRepository);
 const credentialService = new CredentialService();
+const cookieService = new CookieService();
+
 const authController = new AuthController(
   userService,
   logger,
   tokenService,
   credentialService,
+  cookieService,
 );
 router.post(
   "/register",
@@ -43,6 +48,13 @@ router.get(
   authenticate,
   (req: Request, res: Response, next: NextFunction) =>
     authController.me(req as AuthRequest, res, next),
+);
+
+router.post(
+  "/refresh",
+  validateRefreshToken,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.refresh(req as AuthRequest, res, next),
 );
 
 export default router;

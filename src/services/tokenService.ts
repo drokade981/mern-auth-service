@@ -47,4 +47,15 @@ export class TokenService {
     });
     return newRefreshToken;
   }
+
+  async deleteRefreshToken(tokenId: number) {
+    try {
+      await this.refreshTokenRepository.delete({ id: tokenId });
+    } catch (err) {
+      const error = createHttpError(500, "Error deleting refresh token", {
+        cause: err,
+      });
+      throw error;
+    }
+  }
 }

@@ -7,6 +7,7 @@ import { validationResult } from "express-validator";
 import { TokenService } from "../services/TokenService";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/CredentialService";
+import { CookieService } from "../services/CookieService";
 
 export class AuthController {
   constructor(
@@ -14,6 +15,7 @@ export class AuthController {
     private logger: Logger,
     private tokenService: TokenService,
     private credentialService: CredentialService,
+    private cookieService: CookieService,
   ) {}
 
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
@@ -52,21 +54,11 @@ export class AuthController {
 
       const refreshToken = this.tokenService.generateRefreshToken({
         ...payload,
-        id: String(newRefreshToken),
+        id: String(newRefreshToken.id), // include the database ID of the refresh token in the payload
       });
 
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 1000, // 1 hour
-        httpOnly: true,
-      });
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 24 * 365 * 60 * 60 * 1000, // 1 year
-        httpOnly: true,
-      });
+      await this.cookieService.storeAccessTokenInCookie(res, accessToken);
+      await this.cookieService.storeRefreshTokenInCookie(res, refreshToken);
 
       res.status(201).json(user);
     } catch (error) {
@@ -131,21 +123,11 @@ export class AuthController {
 
       const refreshToken = this.tokenService.generateRefreshToken({
         ...payload,
-        id: String(newRefreshToken),
+        id: String(newRefreshToken.id),
       });
 
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 1000, // 1 hour
-        httpOnly: true,
-      });
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 24 * 365 * 60 * 60 * 1000, // 1 year
-        httpOnly: true,
-      });
+      await this.cookieService.storeAccessTokenInCookie(res, accessToken);
+      await this.cookieService.storeRefreshTokenInCookie(res, refreshToken);
 
       this.logger.info(`User logged in with id: ${user.id}`);
       // return the response
@@ -165,6 +147,45 @@ export class AuthController {
     } catch (error) {
       next(error);
       return;
+    }
+  }
+
+  async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const payload: JwtPayload = {
+        sub: req.auth.sub,
+        role: req.auth.role,
+      };
+
+      const accessToken = this.tokenService.generateAccessToken(payload);
+
+      const user = await this.userService.findById(Number(req.auth.sub));
+
+      if (!user) {
+        const error = createHttpError(
+          400,
+          "User with token could not be found",
+        );
+        next(error);
+        return;
+      }
+
+      // persist refresh token in database with user association and expiration time
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+      // delete the old refresh token from database using the ID from the token payload
+      await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: String(newRefreshToken.id),
+      });
+
+      await this.cookieService.storeAccessTokenInCookie(res, accessToken);
+      await this.cookieService.storeRefreshTokenInCookie(res, refreshToken);
+
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ error: "Error refreshing token", err });
     }
   }
 }
