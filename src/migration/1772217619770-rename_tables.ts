@@ -5,7 +5,7 @@ export class RenameTables1772217619770 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "refresh_token" DROP CONSTRAINT "PK_b575dd3c21fb0831013c909e7fe"`,
+      `ALTER TABLE "refresh_token" DROP CONSTRAINT "FK_265bec4e500714d5269580a0219"`,
     );
 
     await queryRunner.renameTable("user", "users");
@@ -18,7 +18,7 @@ export class RenameTables1772217619770 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "refreshtokens" DROP CONSTRAINT "FK_5e0a01181da36ecd50cacef092f"`,
+      `ALTER TABLE "refreshTokens" DROP CONSTRAINT "FK_5e0a01181da36ecd50cacef092f"`,
     );
 
     await queryRunner.renameTable("users", "user");
