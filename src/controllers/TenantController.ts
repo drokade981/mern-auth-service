@@ -9,7 +9,7 @@ export class TenantController {
     private logger: Logger,
   ) {}
 
-  async creeate(req: CreateTenantRequest, res: Response, next: NextFunction) {
+  async create(req: CreateTenantRequest, res: Response, next: NextFunction) {
     const { name, address } = req.body;
     this.logger.debug("New tenant creation request", {
       name,

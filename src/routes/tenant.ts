@@ -4,6 +4,7 @@ import { TenantService } from "../services/tenantService";
 import { Tenant } from "../entity/Tenant";
 import { AppDataSource } from "../config/data-source";
 import logger from "../config/logger";
+import authenticate from "../middlewares/authenticate";
 
 const router = express.Router();
 
@@ -11,8 +12,8 @@ const tenantRepository = AppDataSource.getRepository(Tenant);
 const tenantService = new TenantService(tenantRepository);
 const tentantController = new TenantController(tenantService, logger);
 
-router.post("/", (req, res, next) => {
-  tentantController.creeate(req, res, next);
+router.post("/", authenticate, (req, res, next) => {
+  tentantController.create(req, res, next);
 });
 
 export default router;
