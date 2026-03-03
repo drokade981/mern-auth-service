@@ -18,4 +18,13 @@ router.post("/", authenticate, canAccess([Roles.ADMIN]), (req, res, next) => {
   tentantController.create(req, res, next);
 });
 
+router.patch(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req, res, next) => {
+    tentantController.update(req, res, next);
+  },
+);
+
 export default router;

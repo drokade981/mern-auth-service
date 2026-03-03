@@ -23,4 +23,26 @@ export class TenantController {
       next(error);
     }
   }
+
+  async update(req: CreateTenantRequest, res: Response, next: NextFunction) {
+    const { name, address } = req.body;
+    const tenantId = req.params.id;
+
+    if (isNaN(Number(tenantId))) {
+      return res.status(400).json({ message: "Invalid tenant ID" });
+    }
+    try {
+      const tenant = await this.tenantService.update(tenantId, {
+        name,
+        address,
+      });
+      if (!tenant) {
+        return res.status(404).json({ message: "Tenant not found" });
+      }
+      this.logger.info(`Tenant updated with id: ${tenant.id}`);
+      res.status(200).json({ id: tenant.id });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

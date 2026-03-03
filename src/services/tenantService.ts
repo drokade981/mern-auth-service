@@ -8,4 +8,8 @@ export class TenantService {
   async create(tenatnData: ITenant) {
     return await this.tenantRepository.save(tenatnData);
   }
+
+  async update(tenantId: string, tenantData: ITenant) {
+    return await this.tenantRepository.update(tenantId, tenantData);
+  }
 }
