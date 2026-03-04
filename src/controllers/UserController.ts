@@ -29,4 +29,28 @@ export class UserController {
       next(error);
     }
   }
+
+  async update(req: CreateUserRequest, res: Response, next: NextFunction) {
+    const { firstName, lastName, role } = req.body;
+    const userId = req.params.id;
+
+    if (isNaN(Number(userId))) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    try {
+      const user = await this.userService.update(Number(userId), {
+        firstName,
+        lastName,
+        role,
+      });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res
+        .status(200)
+        .json({ id: userId, message: "User updated successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
