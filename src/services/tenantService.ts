@@ -9,7 +9,11 @@ export class TenantService {
     return await this.tenantRepository.save(tenatnData);
   }
 
-  async update(tenantId: string, tenantData: ITenant) {
+  async update(tenantId: number, tenantData: ITenant) {
     return await this.tenantRepository.update(tenantId, tenantData);
+  }
+
+  async getAll() {
+    return await this.tenantRepository.find();
   }
 }

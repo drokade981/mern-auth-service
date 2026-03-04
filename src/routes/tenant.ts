@@ -27,4 +27,8 @@ router.patch(
   },
 );
 
+router.get("/", authenticate, canAccess([Roles.ADMIN]), (req, res, next) => {
+  tentantController.getAll(req, res, next);
+});
+
 export default router;

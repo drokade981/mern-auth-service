@@ -22,7 +22,7 @@ export class UserService {
         lastName,
         email,
         password: hashedPassword,
-        role: role, // assign customer role to created user
+        role: role, // assign role to created user
       });
     } catch {
       const error = createHttpError(500, "Error creating user");
