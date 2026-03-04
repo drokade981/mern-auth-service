@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import request from "supertest";
 import { AppDataSource } from "../../src/config/data-source";
 import app from "../../src/app";
+import { Roles } from "../../src/constants";
 
 describe("POST /auth/login", () => {
   let connection: DataSource;
@@ -30,6 +31,7 @@ describe("POST /auth/login", () => {
         lastName: "Doe",
         email: "x1e7D@example.com",
         password: "password",
+        role: Roles.CUSTOMER,
       };
       await request(app).post("/auth/register").send(userData);
 
@@ -63,6 +65,7 @@ describe("POST /auth/login", () => {
         lastName: "Doe",
         email: "x1e7D@example.com",
         password: "password",
+        role: Roles.CUSTOMER,
       };
       await request(app).post("/auth/register").send(userData);
       // act
@@ -73,6 +76,7 @@ describe("POST /auth/login", () => {
         firstName: "John",
         lastName: "Doe",
         email: "x1e7D@example.com",
+        role: Roles.CUSTOMER,
       });
     });
 

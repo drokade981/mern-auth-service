@@ -33,6 +33,7 @@ export class UserService {
   async findByEmail(email: string) {
     return await this.userRepository.findOne({
       where: { email },
+      select: ["id", "firstName", "lastName", "email", "role", "password"],
     });
   }
 
@@ -59,5 +60,11 @@ export class UserService {
       const error = createHttpError(500, "Error updating user", { cause: err });
       throw error;
     }
+  }
+
+  async getById(userId: number) {
+    return await this.userRepository.findOne({
+      where: { id: userId },
+    });
   }
 }

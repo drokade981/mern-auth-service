@@ -45,6 +45,7 @@ describe("POST /auth/users", () => {
         email: "x1e7D@example.com",
         password: "password",
         tenantId: 1,
+        role: Roles.MANAGER,
       };
 
       // act
@@ -72,6 +73,7 @@ describe("POST /auth/users", () => {
         email: "x1e7D@example.com",
         password: "password",
         tenantId: 1,
+        role: Roles.MANAGER,
       };
 
       // act

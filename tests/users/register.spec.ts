@@ -152,7 +152,9 @@ describe("POST /auth/register", () => {
 
       // assert
       const userRepository = connection.getRepository(User);
-      const users = await userRepository.find();
+      const users = await userRepository.find({
+        select: ["password"],
+      });
       expect(users[0]).toHaveProperty("password");
       expect(users[0].password).not.toBe(userData.password);
       expect(users[0].password).toHaveLength(60); // bcrypt hash length is 60 characters

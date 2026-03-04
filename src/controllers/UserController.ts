@@ -53,4 +53,21 @@ export class UserController {
       next(error);
     }
   }
+
+  async getUserById(req: Request, res: Response, next: NextFunction) {
+    const userId = req.params.id;
+
+    if (isNaN(Number(userId))) {
+      return res.status(400).json({ message: "Invalid Url Parameter" });
+    }
+    try {
+      const user = await this.userService.getById(Number(userId));
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
