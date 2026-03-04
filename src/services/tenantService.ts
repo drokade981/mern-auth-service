@@ -16,4 +16,10 @@ export class TenantService {
   async getAll() {
     return await this.tenantRepository.find();
   }
+
+  async getTenantById(tenantId: number) {
+    return await this.tenantRepository.findOne({
+      where: { id: tenantId },
+    });
+  }
 }

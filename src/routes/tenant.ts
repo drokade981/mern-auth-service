@@ -31,4 +31,8 @@ router.get("/", authenticate, canAccess([Roles.ADMIN]), (req, res, next) => {
   tentantController.getAll(req, res, next);
 });
 
+router.get("/:id", authenticate, canAccess([Roles.ADMIN]), (req, res, next) => {
+  tentantController.getTenantById(req, res, next);
+});
+
 export default router;
