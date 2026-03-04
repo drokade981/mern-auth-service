@@ -35,4 +35,13 @@ router.get("/:id", authenticate, canAccess([Roles.ADMIN]), (req, res, next) => {
   tentantController.getTenantById(req, res, next);
 });
 
+router.delete(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req, res, next) => {
+    tentantController.destroy(req, res, next);
+  },
+);
+
 export default router;

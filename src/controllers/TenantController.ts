@@ -62,11 +62,29 @@ export class TenantController {
       return res.status(400).json({ message: "Invalid Url Parameter" });
     }
     try {
-      const tenant = await this.tenantService.getTenantById(Number(tenantId));
+      const tenant = await this.tenantService.getById(Number(tenantId));
       if (!tenant) {
         return res.status(404).json({ message: "Tenant not found" });
       }
       res.status(200).json(tenant);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async destroy(req: Request, res: Response, next: NextFunction) {
+    const tenantId = req.params.id;
+
+    if (isNaN(Number(tenantId))) {
+      return res.status(400).json({ message: "Invalid tenant ID" });
+    }
+    try {
+      const tenant = await this.tenantService.deletetById(Number(tenantId));
+      if (!tenant) {
+        return res.status(404).json({ message: "Tenant not found" });
+      }
+      this.logger.info(`Tenant deleted with id: ${tenantId}`);
+      res.status(200).json({ message: "Tenant deleted successfully" });
     } catch (error) {
       next(error);
     }
