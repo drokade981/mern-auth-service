@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/userService";
-import { CreateUserRequest } from "../types";
+import { CreateUserRequest, UpdateUserRequest } from "../types";
 import { NextFunction } from "express-serve-static-core";
+import { validationResult } from "express-validator";
 
 export class UserController {
   constructor(private userService: UserService) {}
   async create(req: CreateUserRequest, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: result.array() });
+    }
     const { firstName, lastName, email, password, role } = req.body;
     try {
       const user = await this.userService.create({
@@ -30,7 +35,11 @@ export class UserController {
     }
   }
 
-  async update(req: CreateUserRequest, res: Response, next: NextFunction) {
+  async update(req: UpdateUserRequest, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: result.array() });
+    }
     const { firstName, lastName, role } = req.body;
     const userId = req.params.id;
 
