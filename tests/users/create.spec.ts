@@ -7,6 +7,7 @@ import createJWKSMock from "mock-jwks";
 import { User } from "../../src/entity/User";
 import { Roles } from "../../src/constants";
 import { Tenant } from "../../src/entity/Tenant";
+import { createTenant } from "../utils";
 
 describe("POST /auth/users", () => {
   let connection: DataSource;
@@ -35,11 +36,7 @@ describe("POST /auth/users", () => {
 
   describe("given all fields", () => {
     it("should persist user in database", async () => {
-      const tenantRepository = connection.getRepository(Tenant);
-      const tenant = await tenantRepository.save({
-        name: "Tenant test",
-        address: "This is tenant 1",
-      });
+      const tenant = await createTenant(connection.getRepository(Tenant));
 
       const adminToken = jwks.token({
         sub: "1",
@@ -69,11 +66,7 @@ describe("POST /auth/users", () => {
     });
 
     it("should create a manager user", async () => {
-      const tenantRepository = connection.getRepository(Tenant);
-      const tenant = await tenantRepository.save({
-        name: "Tenant test",
-        address: "This is tenant 1",
-      });
+      const tenant = await createTenant(connection.getRepository(Tenant));
 
       const adminToken = jwks.token({
         sub: "1",
@@ -103,6 +96,8 @@ describe("POST /auth/users", () => {
     });
 
     it("should return 403 status code if non admin tries to create user", async () => {
+      const tenant = await createTenant(connection.getRepository(Tenant));
+
       const nonAdminToken = jwks.token({
         sub: "2",
         role: Roles.MANAGER,
@@ -113,7 +108,7 @@ describe("POST /auth/users", () => {
         lastName: "Doe",
         email: "x1e7D@example.com",
         password: "password",
-        tenantId: 1,
+        tenantId: tenant,
       };
 
       // add token to cookie
