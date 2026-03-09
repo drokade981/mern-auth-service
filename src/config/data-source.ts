@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
   // don't use synchronize in production, it automatically creates database tables based on your entities and can drop existing tables if there are changes in the entity definitions. In production, it's recommended to use migrations to manage database schema changes safely.
   synchronize: false, //Config.NODE_ENV === "dev" || Config.NODE_ENV === "test", // only synchronize in development and test environments , false in production
   logging: false,
-  entities: ["src/entity/*.ts"],
-  migrations: ["src/migration/*.ts"],
+  entities: ["src/entity/*.{ts,js}"],
+  migrations: ["src/migration/*.{ts,js}"],
   subscribers: [],
 });
