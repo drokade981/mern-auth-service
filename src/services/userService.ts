@@ -7,7 +7,14 @@ import bcrypt from "bcrypt";
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
 
-  async create({ firstName, lastName, email, password, role }: UserData) {
+  async create({
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    tenantId,
+  }: UserData) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (user) {
       throw createHttpError(400, "User with this email already exists");
@@ -23,6 +30,7 @@ export class UserService {
         email,
         password: hashedPassword,
         role: role, // assign role to created user
+        tenant: tenantId ? { id: tenantId } : undefined,
       });
     } catch {
       const error = createHttpError(500, "Error creating user");
