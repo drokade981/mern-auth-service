@@ -1,5 +1,5 @@
-import crypto from "crypto";
-import fs from "fs";
+import crypto from "node:crypto";
+import fs from "node:fs";
 
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
     modulusLength: 2048,
