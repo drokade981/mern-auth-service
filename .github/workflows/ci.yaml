@@ -19,6 +19,19 @@ jobs:
           run: npm ci
         - name: run eslint
           run: npm run lint:fix
+        - name: Create .env.test
+          run: |
+            cat > .env.test << EOF
+            DB_HOST=${{ secrets.TEST_DB_HOST }}
+            DB_PORT=${{ secrets.TEST_DB_PORT }}
+            DB_USERNAME=${{ secrets.TEST_DB_USER }}
+            DB_PASSWORD=${{ secrets.TEST_DB_PASSWORD }}
+            DB_NAME=${{ secrets.TEST_DB_NAME }}
+            REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+            JWKS_URI=${{ secrets.JWKS_URI }}
+            PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}
+            NODE_ENV=test
+            EOF
         - name: Test and coverage
           run: npm test
           env:
