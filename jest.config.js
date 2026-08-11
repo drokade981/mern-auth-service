@@ -12,4 +12,5 @@ module.exports = {
   collectCoverage: true,
   coverageProvider: "v8",
   collectCoverageFrom: ["src/**/*.ts", "!tests/**", "!**/node_modules/**"],
+  testMatch: ["**/__tests__/**/*.spec.ts", "**/?(*.)+(spec|test).ts"],
 };
